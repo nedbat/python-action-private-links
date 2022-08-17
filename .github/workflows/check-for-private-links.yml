@@ -39,12 +39,19 @@ jobs:
 
       - name: "Install requirements"
         run: |
-          python -m pip install requests
+          python -m pip install \
+            requests==2.28.1 \
+            markdown==3.4.1 \
+            lxml==4.9.1
 
       - name: "Create code to run"
         run: |
           cat > check-links.py <<END_OF_PYTHON
           import sys
+
+          import lxml.html
+          import markdown
+
           def stdin_commits():
               commits = sys.stdin.read().split("\0")
               for commit in commits:
@@ -53,10 +60,24 @@ jobs:
                       hash = meta.split("\n", maxsplit=1)[0]
                       yield (hash, message)
 
-          print(f"title: {sys.argv[1]!r}")
-          print(f"description: {sys.argv[2]!r}")
-          for hash, message in stdin_commits():
-              print(f"commit {hash}: {message!r}")
+          def markdown_urls(text):
+              print(f"{text=}")
+              md = markdown.markdown(text)
+              print(f"{md=}")
+              doc = lxml.html.document_fromstring(md)
+              for link in doc.xpath('//a'):
+                  yield link.get('href')
+
+          def things_to_check():
+              yield "PR title", sys.argv[1]
+              yield "PR description", sys.argv[2]
+              for hash, message in stdin_commits():
+                  yield f"commit {hash}", message
+
+          for name, text in things_to_check():
+              for url in markdown_urls(text):
+                  print(f"{name} has {url}")
+
           END_OF_PYTHON
 
       - name: "Run the code"
