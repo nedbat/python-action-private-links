@@ -48,3 +48,7 @@ jobs:
           DESCRIPTION: ${{ github.event.pull_request.body }}
         run: |
           echo "$DESCRIPTION"
+
+      - name: "Show the commits"
+        run: |
+          git log ${{ github.base_ref }}..${{ github.head_ref}}
