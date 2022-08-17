@@ -32,9 +32,7 @@ def stdin_commits():
             yield (hash, textwrap.dedent(message))
 
 def markdown_urls(text):
-    print(f"{text=}")
     html = markdown.convert(text)
-    print(f"{html=}")
     doc = lxml.html.document_fromstring(html)
     for link in doc.xpath('//a'):
         yield link.get('href')
