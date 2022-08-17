@@ -46,8 +46,8 @@ jobs:
           cat > check-links.py <<EOF
           # This is a Python file
           import sys
-          for text in sys.argv[1:]:
-              print(repr(text))
+          text = sys.stdin.read()
+          print(repr(text))
           EOF
 
       - name: "Show the description"
@@ -58,8 +58,8 @@ jobs:
 
       - name: "Run the code: git log"
         run: |
-          python check-links.py "$(git log --format='=%H=%n%B' ${{ github.base_ref }}..${{ github.head_ref}})"
+          git log --format='=%H=%n%B' ${{ github.base_ref }}..${{ github.head_ref}} | python check-links.py
 
       - name: "Run the code: git rev-list"
         run: |
-          python check-links.py "$(git rev-list --header ${{ github.base_ref }}..${{ github.head_ref}})"
+          git rev-list --header ${{ github.base_ref }}..${{ github.head_ref}} | python check-links.py
