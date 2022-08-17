@@ -28,6 +28,11 @@ jobs:
           fetch-depth: 0
           ref: ${{github.event.after}}
 
+      - name: Checkout more
+        run: |
+          git checkout ${{ github.base_ref }}
+          git checkout ${{ github.head_ref }}
+
       - name: "Install Python"
         uses: actions/setup-python@v4
         with:
