@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: "Dump context"
-        uses: crazy-max/ghaction-dump-context@v1
+      #- name: "Dump context"
+      #  uses: crazy-max/ghaction-dump-context@v1
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -49,7 +49,10 @@ jobs:
           text = sys.stdin.read()
           commits = text.split("\0")
           for i, commit in enumerate(commits):
-              print(i, repr(commit))
+              if commit:
+                  meta, message = commit.split("\n\n", maxsplit=1)
+                  hash = meta.split("\n", maxsplit=1)[0]
+                  print(i, hash, repr(message))
           EOF
 
       - name: "Show the description"
