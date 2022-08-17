@@ -1,5 +1,6 @@
 import re
 import sys
+import textwrap
 
 import lxml.html
 import markdown2
@@ -28,7 +29,7 @@ def stdin_commits():
         if commit:
             meta, message = commit.split("\n\n", maxsplit=1)
             hash = meta.split("\n", maxsplit=1)[0]
-            yield (hash, message)
+            yield (hash, textwrap.dedent(message))
 
 def markdown_urls(text):
     print(f"{text=}")
