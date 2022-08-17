@@ -42,3 +42,9 @@ jobs:
       - name: "Run the code"
         run: |
           python check-links.py
+
+      - name: "Show the description"
+        env:
+          DESCRIPTION: ${{ github.event.pull_request.body }}
+        run: |
+          echo "$DESCRIPTION"
