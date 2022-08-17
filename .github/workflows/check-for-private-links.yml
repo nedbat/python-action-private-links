@@ -3,7 +3,6 @@
 name: "Check for private links"
 
 on:
-  push:
   pull_request:
 
 defaults:
@@ -26,7 +25,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          ref: ${{github.event.after}}
+          ref: ${{ github.event.after }}
 
       - name: Checkout more
         run: |
