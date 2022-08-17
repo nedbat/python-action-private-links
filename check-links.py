@@ -48,8 +48,13 @@ def markdown_urls(text):
     for link in doc.xpath('//a'):
         yield link.get('href')
 
+def remove_private_refs(text):
+    """Remove lines marked `Private-ref:`."""
+    return re.sub(r"(?mi)^private-ref:.*$", "", text)
+
 def text_errors(text):
     """Yield error messages for problems in `text`, maybe none."""
+    text = remove_private_refs(text)
     for url in markdown_urls(text):
         try:
             status = requests.get(url).status_code
