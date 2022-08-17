@@ -34,19 +34,19 @@ def stdin_commits():
             hash = meta.split("\n", maxsplit=1)[0]
             yield (hash, textwrap.dedent(message))
 
-def markdown_urls(text):
-    """Yield the URLs in the markdown `text`."""
-    html = markdown.convert(text)
-    doc = lxml.html.document_fromstring(html)
-    for link in doc.xpath('//a'):
-        yield link.get('href')
-
 def things_to_check():
     """What are all of the things we should check?"""
     yield "PR title", sys.argv[1]
     yield "PR description", sys.argv[2]
     for hash, message in stdin_commits():
         yield f"commit {hash}", message
+
+def markdown_urls(text):
+    """Yield the URLs in the markdown `text`."""
+    html = markdown.convert(text)
+    doc = lxml.html.document_fromstring(html)
+    for link in doc.xpath('//a'):
+        yield link.get('href')
 
 def text_errors(text):
     """Yield error messages for problems in `text`, maybe none."""
