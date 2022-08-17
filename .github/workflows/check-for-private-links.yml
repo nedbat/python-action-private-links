@@ -55,10 +55,6 @@ jobs:
         run: |
           echo "$DESCRIPTION"
 
-      - name: "Show the commits"
-        run: |
-          git log --format="%B" ${{ github.base_ref }}..${{ github.head_ref}}
-
       - name: "Run the code"
         run: |
-          python check-links.py "$(git log --format='%B' ${{ github.base_ref }}..${{ github.head_ref}})"
+          python check-links.py "$(git log --format='=%H=%n%B' ${{ github.base_ref }}..${{ github.head_ref}})"
