@@ -45,13 +45,9 @@ jobs:
         run: |
           cat > check-links.py <<EOF
           # This is a Python file
-          for i in range(10):
-              print(i)
+          import sys
+          print(repr(sys.argv[1]))
           EOF
-
-      - name: "Run the code"
-        run: |
-          python check-links.py
 
       - name: "Show the description"
         env:
@@ -62,3 +58,7 @@ jobs:
       - name: "Show the commits"
         run: |
           git log --format="%B" ${{ github.base_ref }}..${{ github.head_ref}}
+
+      - name: "Run the code"
+        run: |
+          python check-links.py "$(git log --format='%B' ${{ github.base_ref }}..${{ github.head_ref}})"
