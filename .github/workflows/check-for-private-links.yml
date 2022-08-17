@@ -41,7 +41,7 @@ jobs:
         run: |
           python -m pip install \
             requests==2.28.1 \
-            markdown==3.4.1 \
+            markdown2==2.4.3 \
             lxml==4.9.1
 
       - name: "Create code to run"
@@ -50,7 +50,7 @@ jobs:
           import sys
 
           import lxml.html
-          import markdown
+          import markdown2
 
           def stdin_commits():
               commits = sys.stdin.read().split("\0")
@@ -62,7 +62,7 @@ jobs:
 
           def markdown_urls(text):
               print(f"{text=}")
-              md = markdown.markdown(text)
+              md = markdown2.markdown(text)
               print(f"{md=}")
               doc = lxml.html.document_fromstring(md)
               for link in doc.xpath('//a'):
