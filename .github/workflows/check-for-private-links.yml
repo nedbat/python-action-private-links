@@ -47,7 +47,9 @@ jobs:
           # This is a Python file
           import sys
           text = sys.stdin.read()
-          print(repr(text))
+          commits = text.split("\0")
+          for i, commit in enumerate(commits):
+              print(i, repr(commit))
           EOF
 
       - name: "Show the description"
@@ -56,9 +58,9 @@ jobs:
         run: |
           echo "$DESCRIPTION"
 
-      - name: "Run the code: git log"
-        run: |
-          git log --format='=%H=%n%B' ${{ github.base_ref }}..${{ github.head_ref}} | python check-links.py
+      #- name: "Run the code: git log"
+      #  run: |
+      #    git log --format='=%H=%n%B' ${{ github.base_ref }}..${{ github.head_ref}} | python check-links.py
 
       - name: "Run the code: git rev-list"
         run: |
