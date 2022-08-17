@@ -43,28 +43,25 @@ jobs:
 
       - name: "Create code to run"
         run: |
-          cat > check-links.py <<EOF
-          # This is a Python file
+          cat > check-links.py <<END_OF_PYTHON
           import sys
-          text = sys.stdin.read()
-          commits = text.split("\0")
-          for i, commit in enumerate(commits):
-              if commit:
-                  meta, message = commit.split("\n\n", maxsplit=1)
-                  hash = meta.split("\n", maxsplit=1)[0]
-                  print(i, hash, repr(message))
-          EOF
+          def stdin_commits():
+              commits = sys.stdin.read().split("\0")
+              for commit in commits:
+                  if commit:
+                      meta, message = commit.split("\n\n", maxsplit=1)
+                      hash = meta.split("\n", maxsplit=1)[0]
+                      yield (hash, message)
 
-      - name: "Show the description"
+          print(f"title: {sys.argv[1]!r}")
+          print(f"description: {sys.argv[2]!r}")
+          for hash, message in stdin_commits():
+              print(f"commit {hash}: {message!r}")
+          END_OF_PYTHON
+
+      - name: "Run the code"
         env:
+          TITLE: ${{ github.event.pull_request.title }}
           DESCRIPTION: ${{ github.event.pull_request.body }}
         run: |
-          echo "$DESCRIPTION"
-
-      #- name: "Run the code: git log"
-      #  run: |
-      #    git log --format='=%H=%n%B' ${{ github.base_ref }}..${{ github.head_ref}} | python check-links.py
-
-      - name: "Run the code: git rev-list"
-        run: |
-          git rev-list --header ${{ github.base_ref }}..${{ github.head_ref}} | python check-links.py
+          git rev-list --header ${{ github.base_ref }}..${{ github.head_ref}} | python check-links.py "$TITLE" "$DESCRIPTION"
