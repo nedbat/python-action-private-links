@@ -47,10 +47,29 @@ jobs:
       - name: "Create code to run"
         run: |
           cat > check-links.py <<END_OF_PYTHON
+          import re
           import sys
 
           import lxml.html
           import markdown2
+
+          URL_PATTERN = re.compile(
+              r"""
+                  \b
+                  (
+                      (?:https?://|(?<!//)www\.)    # prefix - https:// or www.
+                      \w[\w_\-]*(?:\.\w[\w_\-]*)*   # host
+                      [^<>\s"']*                    # rest of url
+                      (?<![?!.,:*_~);])             # exclude trailing punctuation
+                      (?=[?!.,:*_~);]?(?:[<\s]|$))  # make sure that we're not followed by " or ', i.e. we're outside of href="...".
+                  )
+              """,
+              re.X
+          )
+          markdown = markdown2.Markdown(
+              extras=["link-patterns"],
+              link_patterns=[(URL_PATTERN, r'\1')]
+          )
 
           def stdin_commits():
               commits = sys.stdin.read().split("\0")
@@ -62,9 +81,9 @@ jobs:
 
           def markdown_urls(text):
               print(f"{text=}")
-              md = markdown2.markdown(text)
-              print(f"{md=}")
-              doc = lxml.html.document_fromstring(md)
+              html = markdown.convert(text)
+              print(f"{html=}")
+              doc = lxml.html.document_fromstring(html)
               for link in doc.xpath('//a'):
                   yield link.get('href')
 
