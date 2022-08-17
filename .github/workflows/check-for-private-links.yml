@@ -4,6 +4,7 @@ name: "Check for private links"
 
 on:
   push:
+  pull_request:
 
 defaults:
   run:
