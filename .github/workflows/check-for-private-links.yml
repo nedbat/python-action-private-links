@@ -62,4 +62,4 @@ jobs:
 
       - name: "Show the commits"
         run: |
-          git log ${{ github.base_ref }}..${{ github.head_ref}}
+          git log --format="%B" ${{ github.base_ref }}..${{ github.head_ref}}
