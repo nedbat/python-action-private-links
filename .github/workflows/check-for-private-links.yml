@@ -1,0 +1,40 @@
+# Try writing a GitHub Action with Python code inline to check links.
+
+name: "Check for private links"
+
+on:
+  push:
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+jobs:
+  check-links:
+    name: "Check for private links"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Install Python"
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+
+      - name: "Install requirements"
+        run: |
+          python -m pip install requests
+
+      - name: "Create code to run"
+        run: |
+          cat > check-links.py <<EOF
+          # This is a Python file
+          for i in range(10):
+              print(i)
+          EOF
+
+      - name: "Run the code"
+        run: |
+          python check-links.py
