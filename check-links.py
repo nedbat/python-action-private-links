@@ -74,7 +74,7 @@ def text_errors(text):
                 continue
             for bad_snip in BAD_URL_SNIPPETS:
                 if bad_snip in resp.url:
-                    yield f"URL {url} went to URL containing {bad_snip!r}"
+                    yield f"URL {url} went to a URL containing {bad_snip!r}"
                     continue
 
 def main():

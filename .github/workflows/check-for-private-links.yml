@@ -4,6 +4,11 @@ name: "Check for private links"
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - edited
+      - reopened
 
 defaults:
   run:
