@@ -63,7 +63,9 @@ def text_errors(text):
         else:
             ok = (200 <= status < 300)
             if not ok:
-                yield f"URL {url} status is {status}"
+                yield f"BAD: URL {url} status is {status}"
+            else:
+                yield f"btw, URL {url} status is {status}"
 
 for name, text in things_to_check():
     for error_msg in text_errors(text):
