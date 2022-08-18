@@ -52,21 +52,34 @@ def remove_private_refs(text):
     """Remove lines marked `Private-ref:`."""
     return re.sub(r"(?mi)^private-ref:.*$", "", text)
 
+# If you end up at one of these, the URL might not be public.
+BAD_URL_SNIPPETS = [
+    "https://id.atlassian.com/login",
+    "https://trello.com/",
+]
+
 def text_errors(text):
     """Yield error messages for problems in `text`, maybe none."""
     text = remove_private_refs(text)
     for url in markdown_urls(text):
         try:
-            status = requests.get(url).status_code
+            resp = requests.get(url)
         except requests.RequestException as exc:
             yield f"URL {url} failed: {exc}"
         else:
+            status = resp.status_code
             ok = (200 <= status < 300)
             if not ok:
                 yield f"BAD: URL {url} status is {status}"
-            else:
-                yield f"btw, URL {url} status is {status}"
+                continue
+            for bad_snip in BAD_URL_SNIPPETS:
+                if bad_snip in resp.url:
+                    yield f"URL {url} went to URL containing {bad_snip!r}"
+                    continue
 
-for name, text in things_to_check():
-    for error_msg in text_errors(text):
-        print(f"{name}: {error_msg}")
+def main():
+    for name, text in things_to_check():
+        for error_msg in text_errors(text):
+            print(f"{name}: {error_msg}")
+
+main()
