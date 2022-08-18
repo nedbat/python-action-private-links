@@ -39,7 +39,7 @@ def things_to_check():
     yield "PR title", sys.argv[1]
     yield "PR description", sys.argv[2]
     for hash, message in stdin_commits():
-        yield f"commit {hash}", message
+        yield f"Commit {hash}", message
 
 def markdown_urls(text):
     """Yield the URLs in the markdown `text`."""
@@ -61,7 +61,8 @@ def text_errors(text):
         except requests.RequestException as exc:
             yield f"URL {url} failed: {exc}"
         else:
-            if not (200 <= status < 300):
+            ok = (200 <= status < 300)
+            if not ok:
                 yield f"URL {url} status is {status}"
 
 for name, text in things_to_check():
